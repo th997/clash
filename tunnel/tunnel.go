@@ -2,6 +2,7 @@ package tunnel
 
 import (
 	"fmt"
+	"github.com/Dreamacro/clash/proxy/hijacker"
 	"net"
 	"runtime"
 	"sync"
@@ -268,7 +269,7 @@ func handleTCPConn(localConn C.ServerAdapter) {
 	}
 	remoteConn = newTCPTracker(remoteConn, DefaultManager, metadata, rule)
 	defer remoteConn.Close()
-
+	hijacker.AddStat(metadata, remoteConn)
 	switch true {
 	case rule != nil:
 		log.Infoln("[TCP] %s --> %v match %s(%s) using %s", metadata.SourceAddress(), metadata.String(), rule.RuleType().String(), rule.Payload(), remoteConn.Chains().String())

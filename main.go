@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/Dreamacro/clash/proxy/hijacker"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -29,8 +30,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&homeDir, "d", "", "set configuration directory")
-	flag.StringVar(&configFile, "f", "", "specify configuration file")
+	flag.StringVar(&homeDir, "d", "/home/th/soft/m/linux/clash/", "set configuration directory")
+	flag.StringVar(&configFile, "f", "/home/th/soft/m/linux/clash/clash.yaml", "specify configuration file")
 	flag.StringVar(&externalUI, "ext-ui", "", "override external ui directory")
 	flag.StringVar(&externalController, "ext-ctl", "", "override external controller address")
 	flag.StringVar(&secret, "secret", "", "override secret for RESTful API")
@@ -101,4 +102,5 @@ func main() {
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	<-sigCh
+	hijacker.SaveStat()
 }

@@ -3,6 +3,7 @@ package tunnel
 import (
 	"bufio"
 	"errors"
+	"github.com/Dreamacro/clash/log"
 	"io"
 	"net"
 	"net/http"
@@ -19,10 +20,13 @@ import (
 func handleHTTP(request *adapters.HTTPAdapter, outbound net.Conn) {
 	req := request.R
 	host := req.Host
-
+	log.Infoln("[HTTP] %s", req.URL.String())
 	inboundReader := bufio.NewReader(request)
 	outboundReader := bufio.NewReader(outbound)
-
+	//buf,err:=httputil.DumpRequest(req,true);
+	//if err==nil {
+	//	log.Infoln("%s",buf)
+	//}
 	for {
 		keepAlive := strings.TrimSpace(strings.ToLower(req.Header.Get("Proxy-Connection"))) == "keep-alive"
 
@@ -39,6 +43,7 @@ func handleHTTP(request *adapters.HTTPAdapter, outbound net.Conn) {
 		if err != nil {
 			break
 		}
+
 		adapters.RemoveHopByHopHeaders(resp.Header)
 
 		if resp.StatusCode == http.StatusContinue {
