@@ -27,11 +27,6 @@ const (
 	LoadBalance
 )
 
-type ServerAdapter interface {
-	net.Conn
-	Metadata() *Metadata
-}
-
 type Connection interface {
 	Chains() Chain
 	AppendToChains(adapter ProxyAdapter)
@@ -50,6 +45,15 @@ func (c Chain) String() string {
 	}
 }
 
+func (c Chain) Last() string {
+	switch len(c) {
+	case 0:
+		return ""
+	default:
+		return c[0]
+	}
+}
+
 type Conn interface {
 	net.Conn
 	Connection
@@ -65,8 +69,21 @@ type PacketConn interface {
 type ProxyAdapter interface {
 	Name() string
 	Type() AdapterType
+
+	// StreamConn wraps a protocol around net.Conn with Metadata.
+	//
+	// Examples:
+	//	conn, _ := net.Dial("tcp", "host:port")
+	//	conn, _ = adapter.StreamConn(conn, metadata)
+	//
+	// It returns a C.Conn with protocol which start with
+	// a new session (if any)
 	StreamConn(c net.Conn, metadata *Metadata) (net.Conn, error)
+
+	// DialContext return a C.Conn with protocol which
+	// contains multiplexing-related reuse logic (if any)
 	DialContext(ctx context.Context, metadata *Metadata) (Conn, error)
+
 	DialUDP(metadata *Metadata) (PacketConn, error)
 	SupportUDP() bool
 	MarshalJSON() ([]byte, error)
@@ -137,7 +154,7 @@ type UDPPacket interface {
 
 	// WriteBack writes the payload with source IP/Port equals addr
 	// - variable source IP/Port is important to STUN
-	// - if addr is not provided, WriteBack will wirte out UDP packet with SourceIP/Prot equals to origional Target,
+	// - if addr is not provided, WriteBack will write out UDP packet with SourceIP/Port equals to original Target,
 	//   this is important when using Fake-IP.
 	WriteBack(b []byte, addr net.Addr) (n int, err error)
 

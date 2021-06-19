@@ -11,7 +11,6 @@ import (
 	"syscall"
 
 	"github.com/Dreamacro/clash/config"
-	"github.com/Dreamacro/clash/constant"
 	C "github.com/Dreamacro/clash/constant"
 	"github.com/Dreamacro/clash/hub"
 	"github.com/Dreamacro/clash/hub/executor"
@@ -30,8 +29,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&homeDir, "d", "/home/th/soft/m/linux/clash/", "set configuration directory")
-	flag.StringVar(&configFile, "f", "/home/th/soft/m/linux/clash/clash.yaml", "specify configuration file")
+	flag.StringVar(&homeDir, "d", "/home/th/soft/mycloud/pc/clash/", "set configuration directory")
+	flag.StringVar(&configFile, "f", "/home/th/soft/mycloud/pc/clash/clash.yaml", "specify configuration file")
 	flag.StringVar(&externalUI, "ext-ui", "", "override external ui directory")
 	flag.StringVar(&externalController, "ext-ctl", "", "override external controller address")
 	flag.StringVar(&secret, "secret", "", "override secret for RESTful API")
@@ -47,7 +46,7 @@ func init() {
 
 func main() {
 	if version {
-		fmt.Printf("Clash %s %s %s %s\n", C.Version, runtime.GOOS, runtime.GOARCH, C.BuildTime)
+		fmt.Printf("Clash %s %s %s with %s %s\n", C.Version, runtime.GOOS, runtime.GOARCH, runtime.Version(), C.BuildTime)
 		return
 	}
 
@@ -77,10 +76,10 @@ func main() {
 	if testConfig {
 		if _, err := executor.Parse(); err != nil {
 			log.Errorln(err.Error())
-			fmt.Printf("configuration file %s test failed\n", constant.Path.Config())
+			fmt.Printf("configuration file %s test failed\n", C.Path.Config())
 			os.Exit(1)
 		}
-		fmt.Printf("configuration file %s test is successful\n", constant.Path.Config())
+		fmt.Printf("configuration file %s test is successful\n", C.Path.Config())
 		return
 	}
 
