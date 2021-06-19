@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/Dreamacro/clash/proxy/hijacker"
+	"github.com/Dreamacro/clash/listener/hijacker"
 	"os"
 	"os/signal"
 	"path/filepath"
